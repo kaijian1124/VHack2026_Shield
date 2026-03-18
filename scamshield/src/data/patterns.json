@@ -1,0 +1,68 @@
+[
+  {
+    "id": "P001",
+    "name": "police_impersonation",
+    "weight": 40,
+    "description": "Impersonates law enforcement or government agencies",
+    "keywords": {
+      "en": ["police", "officer", "detective", "interpol", "authority", "government", "ministry", "investigation", "warrant"],
+      "ms": ["polis", "pegawai", "detektif", "kerajaan", "kementerian", "siasatan", "berwajib", "kastam", "waran"],
+      "zh": ["警察", "警方", "公安", "侦探", "政府", "部门", "机关", "调查", "警署"]
+    }
+  },
+  {
+    "id": "P002",
+    "name": "urgent_transfer",
+    "weight": 35,
+    "description": "Pressures for immediate money transfer",
+    "keywords": {
+      "en": ["transfer", "send money", "bank account", "immediately", "urgent", "payment", "deposit"],
+      "ms": ["pindah", "hantar wang", "akaun bank", "segera", "mendesak", "bayaran", "deposit"],
+      "zh": ["转账", "汇款", "银行账户", "立刻", "马上", "紧急", "付款", "存款"]
+    }
+  },
+  {
+    "id": "P003",
+    "name": "threat_arrest",
+    "weight": 30,
+    "description": "Threatens arrest or legal action",
+    "keywords": {
+      "en": ["arrest", "jail", "prison", "lawsuit", "charge", "criminal", "illegal", "warrant"],
+      "ms": ["tangkap", "penjara", "saman", "mahkamah", "tuduhan", "jenayah", "haram", "waran"],
+      "zh": ["逮捕", "拘留", "坐牢", "监狱", "起诉", "法庭", "犯罪", "违法"]
+    }
+  },
+  {
+    "id": "P004",
+    "name": "parcel_scam",
+    "weight": 20,
+    "description": "Parcel or delivery related extortion",
+    "keywords": {
+      "en": ["parcel", "package", "delivery", "customs", "fee", "clearance", "shipment", "courier"],
+      "ms": ["bungkusan", "pakej", "penghantaran", "kastam", "bayaran", "cukai", "kurier"],
+      "zh": ["包裹", "快递", "海关", "费用", "清关", "运费", "快件"]
+    }
+  },
+  {
+    "id": "P005",
+    "name": "money_laundering_accusation",
+    "weight": 35,
+    "description": "Accuses victim of money laundering",
+    "keywords": {
+      "en": ["money laundering", "fraud", "suspicious", "illegal activity", "frozen", "seized"],
+      "ms": ["pengubahan wang haram", "penipuan", "mencurigakan", "aktiviti haram", "beku", "rampas"],
+      "zh": ["洗钱", "欺诈", "可疑", "非法活动", "冻结", "没收"]
+    }
+  },
+  {
+    "id": "P006",
+    "name": "secrecy_pressure",
+    "weight": 25,
+    "description": "Instructs victim to keep the call secret",
+    "keywords": {
+      "en": ["don't tell", "keep secret", "confidential", "nobody knows", "private"],
+      "ms": ["jangan beritahu", "rahsia", "sulit", "antara kita", "jangan kongsi"],
+      "zh": ["不要告诉", "保密", "机密", "不能告诉别人", "只有我们知道"]
+    }
+  }
+]

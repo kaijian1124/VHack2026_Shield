@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "scamshield",
+    "slug": "scamshield",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e12110c4-c0c9-4fd7-912f-43357230ede8"
+      }
+    },
+    "android": {
+      "package": "com.kaijian1124.scamshield"
+    }
+  }
+}

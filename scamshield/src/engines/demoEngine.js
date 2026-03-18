@@ -1,8 +1,3 @@
-/**
- * Demo Engine — provides realistic simulated calls for hackathon presentation.
- * Simulates STT output at realistic speed (~150ms per word).
- */
-
 export const DEMO_SCENARIOS = [
   {
     id: 'demo_zh_high',
@@ -38,28 +33,19 @@ export const DEMO_SCENARIOS = [
   },
 ];
 
-/**
- * Simulates word-by-word STT streaming
- * Calls onWord(partialTranscript) every ~150ms
- * Calls onComplete(fullTranscript) at end
- */
 export function simulateSTT(scenario, onWord, onComplete) {
-  const words = scenario.transcript.split('');
+  const chars = scenario.transcript.split('');
   let current = '';
   let index = 0;
-
-  // Stream character by character (smoother for demo)
   const interval = setInterval(() => {
-    if (index >= words.length) {
+    if (index >= chars.length) {
       clearInterval(interval);
       onComplete(scenario.transcript);
       return;
     }
-    current += words[index];
+    current += chars[index];
     index++;
     onWord(current);
   }, 60);
-
-  // Return cancel function
   return () => clearInterval(interval);
 }

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet,
-  Animated, Alert, Modal, FlatList,
+  Animated, Modal,
 } from 'react-native';
 import { analyzeTranscript, RISK_CONFIG } from '../engines/patternEngine';
 import { DEMO_SCENARIOS, simulateSTT } from '../engines/demoEngine';
@@ -16,7 +16,6 @@ export default function HomeScreen({ navigation }) {
   const cancelSTT = useRef(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
-  // Pulse animation when listening
   useEffect(() => {
     if (isListening) {
       Animated.loop(
@@ -41,7 +40,6 @@ export default function HomeScreen({ navigation }) {
       scenario,
       (partial) => {
         setTranscript(partial);
-        // Live analysis every ~500ms worth of text
         if (partial.length % 20 === 0) {
           const result = analyzeTranscript(partial);
           setAnalysis(result);
@@ -52,7 +50,6 @@ export default function HomeScreen({ navigation }) {
         setAnalysis(result);
         setIsListening(false);
 
-        // Save to local log
         const logEntry = {
           id: Date.now().toString(),
           callerNumber: scenario.callerNumber,
@@ -62,7 +59,6 @@ export default function HomeScreen({ navigation }) {
         };
         setCallLog(prev => [logEntry, ...prev]);
 
-        // Upload metadata only (no transcript)
         uploadCallLog({
           callId: logEntry.id,
           callerNumber: scenario.callerNumber,
@@ -71,7 +67,7 @@ export default function HomeScreen({ navigation }) {
           overallScore: result.overallScore,
           riskLevel: result.riskLevel,
           triggeredPatterns: result.triggeredPatterns,
-        }).catch(() => {}); // silent fail ok for demo
+        }).catch(() => {});
       }
     );
   }
@@ -85,13 +81,11 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.appName}>🛡️ ScamShield</Text>
         <Text style={styles.tagline}>Protecting You in Real-Time</Text>
       </View>
 
-      {/* Live Risk Badge */}
       {analysis && (
         <Animated.View style={[styles.riskBadge, { backgroundColor: risk.bg, transform: [{ scale: pulseAnim }] }]}>
           <Text style={styles.riskEmoji}>{risk.emoji}</Text>
@@ -100,7 +94,6 @@ export default function HomeScreen({ navigation }) {
         </Animated.View>
       )}
 
-      {/* Transcript Display */}
       {isListening && (
         <View style={styles.transcriptBox}>
           <Text style={styles.transcriptLabel}>🎙️ Live Transcript (On-Device Only)</Text>
@@ -108,7 +101,6 @@ export default function HomeScreen({ navigation }) {
         </View>
       )}
 
-      {/* Triggered Patterns */}
       {analysis && analysis.triggeredPatterns.length > 0 && (
         <View style={styles.patternsBox}>
           <Text style={styles.patternsTitle}>⚡ Detected Patterns</Text>
@@ -124,7 +116,6 @@ export default function HomeScreen({ navigation }) {
         </View>
       )}
 
-      {/* Action Suggestions */}
       {analysis && analysis.riskLevel === 'High' && (
         <View style={styles.actionBox}>
           <Text style={styles.actionTitle}>🚨 Recommended Actions</Text>
@@ -135,7 +126,6 @@ export default function HomeScreen({ navigation }) {
         </View>
       )}
 
-      {/* Buttons */}
       <View style={styles.buttonArea}>
         {!isListening ? (
           <TouchableOpacity style={styles.btnDemo} onPress={() => setShowScenarioPicker(true)}>
@@ -147,17 +137,15 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity style={styles.btnLog} onPress={() => navigation.navigate('CallLog', { callLog })}>
+        <TouchableOpacity style={styles.btnLog} onPress={() => navigation.navigate('Log', { screen: 'CallLog', params: { callLog } })}>
           <Text style={styles.btnTextSecondary}>📋 Call Log ({callLog.length})</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Privacy Notice */}
       <View style={styles.privacyBox}>
         <Text style={styles.privacyText}>🔒 Transcript never leaves your device. Only scores & metadata are synced.</Text>
       </View>
 
-      {/* Scenario Picker Modal */}
       <Modal visible={showScenarioPicker} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
