@@ -8,6 +8,8 @@ import HomeScreen from '../screens/HomeScreen';
 import CallLogScreen from '../screens/CallLogScreen';
 import DetailScreen from '../screens/DetailScreen';
 import HelpScreen from '../screens/HelpScreen';
+import AnalyzeScreen from '../screens/AnalyzeScreen';
+import HistoryScreen from '../screens/HistoryScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -27,7 +29,7 @@ export default function AppNavigator() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused }) => {
-            const icons = { Home: '🛡️', Log: '📋', Help: '🆘' };
+            const icons = { Home: '🛡️', Log: '📋', Analyze: '🔍', History: '📊', Help: '🆘' };
             return <Text style={{ fontSize: focused ? 24 : 20 }}>{icons[route.name]}</Text>;
           },
           tabBarActiveTintColor: '#3F51B5',
@@ -39,6 +41,8 @@ export default function AppNavigator() {
       >
         <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'ScamShield 🛡️' }} />
         <Tab.Screen name="Log" component={CallLogStack} options={{ headerShown: false }} />
+        <Tab.Screen name="Analyze" component={AnalyzeScreen} options={{ title: 'Analyze Call' }} />
+        <Tab.Screen name="History" component={HistoryScreen} options={{ title: 'History' }} />
         <Tab.Screen name="Help" component={HelpScreen} options={{ title: 'Help & Resources' }} />
       </Tab.Navigator>
     </NavigationContainer>

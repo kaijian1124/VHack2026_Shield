@@ -1,0 +1,62 @@
+{
+  "call_id": "CALL_20260318_0001",
+  "timestamp": "2026-03-18T14:32:10Z",
+  "duration_seconds": 185,
+  "language": "zh-CN",
+  "source": "android_accessibility_service",
+  
+  "caller": {
+    "phone_number": "+60123456789",
+    "label": "unknown",
+    "country": "MY"
+  },
+  "receiver": {
+    "user_id": "USER_1024",
+    "phone_number": "+60187654321"
+  },
+  "transcription": {
+    "full_text": "你好，我是银行客服。你的账户出现异常，需要马上验证身份，否则会被冻结。请提供你的身份证号码和一次性验证码。",
+    "segments": [
+      {
+        "speaker": "caller",
+        "start_time": 0,
+        "end_time": 8,
+        "text": "你好，我是银行客服。"
+      },
+      {
+        "speaker": "caller",
+        "start_time": 8,
+        "end_time": 18,
+        "text": "你的账户出现异常，需要马上验证身份，否则会被冻结。"
+      },
+      {
+        "speaker": "caller",
+        "start_time": 18,
+        "end_time": 30,
+        "text": "请提供你的身份证号码和一次性验证码。"
+      },
+      {
+        "speaker": "receiver",
+        "start_time": 30,
+        "end_time": 40,
+        "text": "为什么需要这些信息？"
+      }
+    ]
+  },
+  "nlp_features": {
+    "keywords_detected": ["账户异常", "验证身份", "冻结", "身份证号码", "验证码"],
+    "urgency_score": 0.92,
+    "sensitive_info_request": true,
+    "threat_language_detected": true,
+    "impersonation_risk": 0.88
+  },
+  "metadata": {
+    "device_id": "ANDROID_ABC123",
+    "app_version": "1.0.0",
+    "network_type": "4G",
+    "location": {
+      "country": "MY",
+      "region": "Perak"
+    }
+  }
+}
