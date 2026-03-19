@@ -9,14 +9,14 @@ Detects scam patterns in calls across **3 languages** — English, Bahasa Melayu
 
 ## 📱 Features
 
-- 🎙️ Real-time call transcript analysis (on-device)
-- 🧠 Pattern matching across 6 scam categories
+- 🧠 AI-powered call transcript analysis
+- 🔍 Pattern matching across 6 scam categories
 - 📊 Per-pattern fraud scoring (0–100)
 - 🚨 Risk level detection: Low / Medium / High
-- 🔒 Privacy-first: transcript never leaves your device
-- 📋 Call log with detailed breakdown
+- 📋 Analysis history with detailed breakdown
 - 🆘 Integrated NSRC (997) hotline & action steps
 - 🌐 3-language support: English, Bahasa Melayu, 中文
+- 🔒 Privacy-first: only analysis results stored
 
 ---
 
@@ -27,17 +27,17 @@ scamshield/
 ├── app.json
 ├── src/
 │   ├── screens/
-│   │   ├── HomeScreen.js        # Live detection + demo
-│   │   ├── CallLogScreen.js     # Call history
-│   │   ├── DetailScreen.js      # Per-call breakdown
+│   │   ├── AnalysisScreen.js    # Core analysis (main screen)
+│   │   ├── HistoryScreen.js     # Analysis history from Supabase
+│   │   ├── DetailScreen.js      # Per-analysis breakdown
 │   │   └── HelpScreen.js        # NSRC resources
 │   ├── engines/
-│   │   ├── patternEngine.js     # Core scoring algorithm
-│   │   └── demoEngine.js        # Demo STT simulation
+│   │   └── patternEngine.js     # Risk config & utilities
 │   ├── data/
 │   │   └── patterns.json        # 6 scam patterns, 3 languages
 │   ├── services/
-│   │   └── supabase.js          # Backend API (metadata only)
+│   │   ├── api.js               # Backend API client
+│   │   └── supabase.js          # Supabase client
 │   └── navigation/
 │       └── AppNavigator.js      # Tab + Stack navigation
 └── supabase/
@@ -89,10 +89,9 @@ Scan the QR code with Expo Go on your phone.
 
 ## 🔒 Privacy
 
-- Audio and transcripts are processed **on-device only**
-- Only anonymised metadata (scores, risk level) is uploaded
-- Caller numbers are hashed before storage
-- Temporary data deleted after call ends
+- Audio and transcripts are processed securely
+- Only anonymized analysis results are stored
+- Caller numbers are partially masked before storage
 
 ---
 
@@ -100,8 +99,8 @@ Scan the QR code with Expo Go on your phone.
 
 - **Frontend**: React Native (Expo SDK 54)
 - **Navigation**: React Navigation v6
-- **Backend**: Supabase (Postgres + Auth + Edge Functions)
-- **Pattern Engine**: Custom keyword matching + scoring algorithm
+- **Backend**: FastAPI + Groq AI
+- **Database**: Supabase (Postgres)
 
 ---
 

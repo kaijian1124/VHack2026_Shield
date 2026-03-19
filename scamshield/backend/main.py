@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import os
 import json
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 app = FastAPI()
 
@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+supabase = create_client(os.getenv("EXPO_PUBLIC_SUPABASE_URL"), os.getenv("EXPO_PUBLIC_SUPABASE_KEY"))
 
 SYSTEM_PROMPT = """You are a Malaysian anti-fraud expert specializing in phone scam detection. 
 You have deep knowledge of common scams in Malaysia including:
