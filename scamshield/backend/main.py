@@ -72,7 +72,7 @@ async def analyze(request: AnalyzeRequest):
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": f"Analyze this call transcript:\n\n{request.transcript}"}
             ],
-            temperature=0.1,
+            temperature=0.0,
             max_tokens=1000,
         )
 
