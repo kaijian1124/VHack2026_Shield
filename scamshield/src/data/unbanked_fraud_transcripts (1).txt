@@ -1,0 +1,81 @@
+# MOCK CALL LOG TRANSCRIPTS - UNBANKED MALAYSIA CONTEXT
+
+## 🔴 HIGH RISK（诈骗/FRAUD）
+
+### 🇬🇧 English (High Risk - TNG Account Takeover)
+[Caller]: Hello, this is the Touch 'n Go Security Department. We detected an unauthorized login to your eWallet from a device in Johor.
+[Receiver]: What? But I am in Kampar.
+[Caller]: Exactly. Someone is trying to transfer your RM800 balance to a third-party account. If you don't act now, your wallet will be permanently locked.
+[Receiver]: How do I stop it?
+[Caller]: I need to verify your IC number first to prove you are the owner.
+[Receiver]: Is this really necessary?
+[Caller]: Sir, time is running out. The system is processing the transfer. You will receive a 6-digit OTP code now. Read it to me immediately to cancel the transaction.
+[Receiver]: But the SMS says don't share the code...
+[Caller]: This is an emergency override. If you don't give it, your money is gone. Do it now!
+
+### 🇲🇾 Malay (High Risk - Government Aid/STR Scam)
+[Caller]: Hello, ini dari Jabatan Kebajikan Masyarakat berkaitan bantuan STR (Sumbangan Tunai Rahmah) encik.
+[Receiver]: Ya, saya ada mohon. Ada masalah ke?
+[Caller]: Kami dapati maklumat akaun atau nombor telefon encik tidak lengkap. Kalau tak update hari ni, bayaran RM600 akan dibatalkan.
+[Receiver]: Oh, macam mana nak buat? Saya tak ada akaun bank, saya guna TNG saja.
+[Caller]: Tak apa, kami boleh masukkan ke e-wallet. Tapi saya perlukan nombor IC dan kod pengesahan yang baru masuk ke telefon encik.
+[Receiver]: Kod apa tu?
+[Caller]: Itu kod 'System Verification'. Cepat encik, ramai lagi tengah tunggu giliran. Kalau lambat, nama encik kena 'blacklist' dari bantuan tahun depan.
+[Receiver]: Kejap ya...
+
+### 🇨🇳 Chinese (High Risk - Illegal Package/Authorities Scam)
+[Caller]: 您好，这里是中通快递。我们截获了一个寄往北京的包裹，里面发现多张伪造的身份证和非法提款卡。
+[Receiver]: 你搞错了吧？我没有寄包裹。
+[Caller]: 名字和电话都是你的。现在公安局怀疑你涉嫌洗黑钱。我们可以帮你转接到警察局报案，否则你的所有电子钱包和资产会被冻结。
+[Receiver]: 我只是用现金和TNG的，也要冻结？
+[Caller]: 是的，全马联网。你现在必须配合调查。我们会发一个链接给你，你点进去输入你的个人资料和电子钱包登录密码。
+[Receiver]: 这么严重吗……
+
+
+## 🟡 MEDIUM RISK（可疑/SUSPICIOUS）
+
+### 🇬🇧 English (Medium Risk - Unlicensed Fast Cash)
+[Caller]: Good afternoon! Are you looking for a fast cash loan? No bank statement needed, no payslip needed.
+[Receiver]: How much can I get?
+[Caller]: Up to RM5,000. Approval in 30 minutes, cash sent via TNG or DuitNow.
+[Receiver]: Is this a licensed company?
+[Caller]: Yes, we are a private agency. Just need a photo of your IC and two emergency contact numbers.
+[Receiver]: Let me think about it.
+[Caller]: If you apply now, we give 0% interest for the first month. Want to try?
+
+### 🇲🇾 Malay (Medium Risk - Task-Based Job Scam)
+[Caller]: Hello, saya dari Shopee Marketing Team. Encik berminat nak buat kerja sambilan dari rumah?
+[Receiver]: Kerja apa tu?
+[Caller]: Senang saja, cuma perlu 'like' dan 'share' produk. Kami bayar RM50 ke RM200 sehari.
+[Receiver]: Betul ke? Bayar macam mana?
+[Caller]: Kita bayar terus ke e-wallet. Tapi mula-mula encik kena masuk grup Telegram kami dan letak 'deposit' kecil RM30 untuk aktifkan akaun.
+[Receiver]: Kenapa kena bayar dulu?
+[Caller]: Itu cuma prosedur jaminan. Nanti kami pulangkan balik sekali dengan komisen.
+
+### 🇨🇳 Chinese (Medium Risk - Prize Survey)
+[Caller]: 恭喜你！你在我们的消费调查中被选中，可以领取价值RM100的电子钱包现金券。
+[Receiver]: 真的吗？哪里的调查？
+[Caller]: 就是平时你经常用的购物平台。我们只需要确认一下你的年龄和职业。
+[Receiver]: 问这些干什么？
+[Caller]: 只是做个统计。确认后，我们会发一个二维码给你扫描领奖。
+
+
+## 🟢 LOW RISK（安全/SAFE）
+
+### 🇬🇧 English (Low Risk - Social)
+[Caller]: Hey, are you free this weekend? My cousin is having a wedding in Klang.
+[Receiver]: Oh, I might be free on Sunday. Why?
+[Caller]: Just wanted to see if you wanted to carpool. I’m driving there.
+[Receiver]: Sure, let me check with my boss first and let you know tonight.
+
+### 🇲🇾 Malay (Low Risk - Family/Daily)
+[Caller]: Mat, petang ni jom pergi padang? Budak-budak ajak main bola.
+[Receiver]: Pukul berapa? Aku kena hantar barang kejap.
+[Caller]: Pukul 5:30. Lepas tu kita pergi makan cendol sekali.
+[Receiver]: On. Nanti aku sampai sana aku call kau.
+
+### 🇨🇳 Chinese (Low Risk - Workplace/Personal)
+[Caller]: 妈，今晚我不回家吃饭了，公司要加班。
+[Receiver]: 又加班啊？记得要吃晚餐，不要只喝咖啡。
+[Caller]: 知道了，我刚才买了面包。
+[Receiver]: 好吧，回家开车小心点。

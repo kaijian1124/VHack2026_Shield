@@ -1,0 +1,56 @@
+[
+  {
+    "title": "🇬🇧 English – TNG Account Takeover",
+    "risk": "High",
+    "callerNumber": "+60 11-XXX-5544",
+    "transcript": "[Caller]: Hello, this is the Touch 'n Go Security Department. We detected an unauthorized login to your eWallet from a device in Johor.\n[Receiver]: What? But I am in Kampar.\n[Caller]: Exactly. Someone is trying to transfer your RM800 balance to a third-party account. If you don't act now, your wallet will be permanently locked.\n[Receiver]: How do I stop it?\n[Caller]: I need to verify your IC number first to prove you are the owner.\n[Receiver]: Is this really necessary?\n[Caller]: Sir, time is running out. The system is processing the transfer. You will receive a 6-digit OTP code now. Read it to me immediately to cancel the transaction.\n[Receiver]: But the SMS says don't share the code...\n[Caller]: This is an emergency override. If you don't give it, your money is gone. Do it now!"
+  },
+  {
+    "title": "🇲🇾 Malay – STR Government Aid Scam",
+    "risk": "High",
+    "callerNumber": "+60 3-XXX-2211",
+    "transcript": "[Caller]: Hello, ini dari Jabatan Kebajikan Masyarakat berkaitan bantuan STR (Sumbangan Tunai Rahmah) encik.\n[Receiver]: Ya, saya ada mohon. Ada masalah ke?\n[Caller]: Kami dapati maklumat akaun atau nombor telefon encik tidak lengkap. Kalau tak update hari ni, bayaran RM600 akan dibatalkan.\n[Receiver]: Oh, macam mana nak buat? Saya tak ada akaun bank, saya guna TNG saja.\n[Caller]: Tak apa, kami boleh masukkan ke e-wallet. Tapi saya perlukan nombor IC dan kod pengesahan yang baru masuk ke telefon encik.\n[Receiver]: Kod apa tu?\n[Caller]: Itu kod 'System Verification'. Cepat encik, ramai lagi tengah tunggu giliran. Kalau lambat, nama encik kena 'blacklist' dari bantuan tahun depan.\n[Receiver]: Kejap ya..."
+  },
+  {
+    "title": "🇨🇳 Chinese – Illegal Package/Police Scam",
+    "risk": "High",
+    "callerNumber": "+60 12-XXX-9988",
+    "transcript": "[Caller]: 您好，这里是中通快递。我们截获了一个寄往北京的包裹，里面发现多张伪造的身份证和非法提款卡。\n[Receiver]: 你搞错了吧？我没有寄包裹。\n[Caller]: 名字和电话都是你的。现在公安局怀疑你涉嫌洗黑钱。我们可以帮你转接到警察局报案，否则你的所有电子钱包和资产会被冻结。\n[Receiver]: 我只是用现金和TNG的，也要冻结？\n[Caller]: 是的，全马联网。你现在必须配合调查。我们会发一个链接给你，你点进去输入你的个人资料和电子钱包登录密码。\n[Receiver]: 这么严重吗……"
+  },
+  {
+    "title": "🇬🇧 English – Unlicensed Fast Cash Loan",
+    "risk": "Medium",
+    "callerNumber": "+60 11-XXX-1234",
+    "transcript": "[Caller]: Good afternoon! Are you looking for a fast cash loan? No bank statement needed, no payslip needed.\n[Receiver]: How much can I get?\n[Caller]: Up to RM5,000. Approval in 30 minutes, cash sent via TNG or DuitNow.\n[Receiver]: Is this a licensed company?\n[Caller]: Yes, we are a private agency. Just need a photo of your IC and two emergency contact numbers.\n[Receiver]: Let me think about it.\n[Caller]: If you apply now, we give 0% interest for the first month. Want to try?"
+  },
+  {
+    "title": "🇲🇾 Malay – Shopee Task Job Scam",
+    "risk": "Medium",
+    "callerNumber": "+60 12-XXX-7788",
+    "transcript": "[Caller]: Hello, saya dari Shopee Marketing Team. Encik berminat nak buat kerja sambilan dari rumah?\n[Receiver]: Kerja apa tu?\n[Caller]: Senang saja, cuma perlu 'like' dan 'share' produk. Kami bayar RM50 ke RM200 sehari.\n[Receiver]: Betul ke? Bayar macam mana?\n[Caller]: Kita bayar terus ke e-wallet. Tapi mula-mula encik kena masuk grup Telegram kami dan letak 'deposit' kecil RM30 untuk aktifkan akaun.\n[Receiver]: Kenapa kena bayar dulu?\n[Caller]: Itu cuma prosedur jaminan. Nanti kami pulangkan balik sekali dengan komisen."
+  },
+  {
+    "title": "🇨🇳 Chinese – Prize Survey Scam",
+    "risk": "Medium",
+    "callerNumber": "+60 16-XXX-3322",
+    "transcript": "[Caller]: 恭喜你！你在我们的消费调查中被选中，可以领取价值RM100的电子钱包现金券。\n[Receiver]: 真的吗？哪里的调查？\n[Caller]: 就是平时你经常用的购物平台。我们只需要确认一下你的年龄和职业。\n[Receiver]: 问这些干什么？\n[Caller]: 只是做个统计。确认后，我们会发一个二维码给你扫描领奖。"
+  },
+  {
+    "title": "🇬🇧 English – Safe Social Call",
+    "risk": "Low",
+    "callerNumber": "+60 17-XXX-9900",
+    "transcript": "[Caller]: Hey, are you free this weekend? My cousin is having a wedding in Klang.\n[Receiver]: Oh, I might be free on Sunday. Why?\n[Caller]: Just wanted to see if you wanted to carpool. I'm driving there.\n[Receiver]: Sure, let me check with my boss first and let you know tonight."
+  },
+  {
+    "title": "🇲🇾 Malay – Safe Family Call",
+    "risk": "Low",
+    "callerNumber": "+60 19-XXX-4455",
+    "transcript": "[Caller]: Mat, petang ni jom pergi padang? Budak-budak ajak main bola.\n[Receiver]: Pukul berapa? Aku kena hantar barang kejap.\n[Caller]: Pukul 5:30. Lepas tu kita pergi makan cendol sekali.\n[Receiver]: On. Nanti aku sampai sana aku call kau."
+  },
+  {
+    "title": "🇨🇳 Chinese – Safe Family Call",
+    "risk": "Low",
+    "callerNumber": "+60 18-XXX-6677",
+    "transcript": "[Caller]: 妈，今晚我不回家吃饭了，公司要加班。\n[Receiver]: 又加班啊？记得要吃晚餐，不要只喝咖啡。\n[Caller]: 知道了，我刚才买了面包。\n[Receiver]: 好吧，回家开车小心点。"
+  }
+]
