@@ -1,54 +1,100 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, FlatList, TouchableOpacity,
-  StyleSheet, ActivityIndicator, RefreshControl,
-} from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Animated, Easing, TextInput, RefreshControl } from 'react-native';
 import { fetchCallHistory } from '../services/supabase';
 import patterns from '../data/patterns.json';
 
-const RISK_CONFIG = {
-  low:    { color: '#6FAF4F', bg: '#F0F7EB', emoji: '✅', label: 'Low' },
-  medium: { color: '#D4870A', bg: '#FDF3E3', emoji: '⚠️', label: 'Medium' },
-  high:   { color: '#C44A3A', bg: '#FAEDEB', emoji: '🚨', label: 'High' },
+const C = {
+  bg: '#EEF2EF', surface: '#FFFFFF', dark: '#484F58',
+  green: '#006D4B', greenLight: '#E8F5EE', greenAccent: '#4CAF82',
+  red: '#D93025', redLight: '#FDECEA',
+  amber: '#E8A000', amberLight: '#FFF8E7',
+  text: '#1A1F2C', muted: '#6B7280', border: '#E5EAE7',
 };
 
-const FILTERS = ['All', 'High', 'Medium', 'Low'];
+const RISK = {
+  low:    { color: C.green, bg: C.greenLight, label: 'VERIFIED',     icon: '✓', darkBg: '#1B4D35' },
+  medium: { color: C.amber, bg: C.amberLight, label: 'SUSPICIOUS',   icon: '⚠', darkBg: '#5A3E00' },
+  high:   { color: C.red,   bg: C.redLight,   label: 'DANGEROUS',    icon: '!', darkBg: '#5A1A14' },
+};
 
-function enrichPatterns(patternNames, allPatterns) {
-  return patternNames.map(name => {
-    const normalizedName = name.toLowerCase().replace(/ /g, '_');
-    const pattern = allPatterns.find(p =>
-      p.name === normalizedName ||
-      p.name.toLowerCase() === name.toLowerCase() ||
-      p.name.replace(/_/g, ' ').toLowerCase() === name.toLowerCase()
-    );
-    if (pattern) {
-      return { patternId: pattern.id, patternName: pattern.name, weight: pattern.weight, score: pattern.weight, triggered: true, matchedKeywords: [] };
-    }
-    return { patternId: 'P000', patternName: name.replace(/_/g, ' '), weight: 0, score: 0, triggered: true, matchedKeywords: [] };
-  });
-}
+const FILTERS = ['High Risk Only', 'Recent', 'By Score'];
 
 function normalizeItem(item, allPatterns) {
   const riskLevel = item.risk_level ? item.risk_level.charAt(0).toUpperCase() + item.risk_level.slice(1) : 'Low';
-  const enrichedPatterns = item.patterns_detected ? enrichPatterns(item.patterns_detected, allPatterns) : [];
-  const allPatternResults = allPatterns.map(p => {
-    const found = enrichedPatterns.find(ep => ep.patternId === p.id);
-    return found || { patternId: p.id, patternName: p.name, weight: p.weight, score: 0, triggered: false, matchedKeywords: [] };
+  const detected = item.patterns_detected || [];
+  const triggeredNames = detected.map(n => n.toLowerCase().replace(/ /g, '_'));
+  const enriched = allPatterns.map(p => {
+    const hit = triggeredNames.some(n => n === p.name || n === p.name.replace(/_/g, ' ') || p.name.includes(n));
+    return { patternId: p.id, patternName: p.name, weight: p.weight, score: hit ? p.weight : 0, triggered: hit };
   });
   return {
     id: item.id,
-    callerNumber: item.caller_number || 'Unknown',
+    callerNumber: item.caller_number || 'Unknown Caller',
     callStart: item.call_start || item.created_at,
-    callEnd: item.call_end || null,
-    language: 'en',
     overallScore: item.overall_score || item.score || 0,
     riskLevel,
-    triggeredPatterns: enrichedPatterns,
-    patternResults: allPatternResults,
+    triggeredPatterns: enriched.filter(p => p.triggered),
+    patternResults: enriched,
     recommendation: item.recommendation || '',
     reasons: item.reasons || [],
+    patterns_detected: item.patterns_detected || [],
   };
+}
+
+// ─── Pulsing Active Dot ───────────────────────────────────────────────────────
+function PulseDot() {
+  const pulse = useRef(new Animated.Value(1)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    Animated.loop(Animated.parallel([
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 2.2, duration: 900, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 1, duration: 900, useNativeDriver: true }),
+      ]),
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 0, duration: 900, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 1, duration: 900, useNativeDriver: true }),
+      ]),
+    ])).start();
+  }, []);
+  return (
+    <View style={{ width: 10, height: 10, alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
+      <Animated.View style={{ position: 'absolute', width: 10, height: 10, borderRadius: 5, backgroundColor: C.greenAccent, opacity, transform: [{ scale: pulse }] }} />
+      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: C.greenAccent }} />
+    </View>
+  );
+}
+
+// ─── Stagger Fade Card ────────────────────────────────────────────────────────
+function FadeItem({ children, delay = 0, style }) {
+  const fade = useRef(new Animated.Value(0)).current;
+  const slide = useRef(new Animated.Value(20)).current;
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fade, { toValue: 1, duration: 400, delay, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(slide, { toValue: 0, duration: 400, delay, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+  }, []);
+  return <Animated.View style={[{ opacity: fade, transform: [{ translateY: slide }] }, style]}>{children}</Animated.View>;
+}
+
+// ─── Call Row Icon ────────────────────────────────────────────────────────────
+function CallIcon({ riskKey }) {
+  const r = RISK[riskKey] || RISK.low;
+  const pulse = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (riskKey === 'high') {
+      Animated.loop(Animated.sequence([
+        Animated.timing(pulse, { toValue: 1.08, duration: 600, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 1, duration: 600, useNativeDriver: true }),
+      ])).start();
+    }
+  }, []);
+  return (
+    <Animated.View style={[styles.callIcon, { backgroundColor: r.bg, transform: [{ scale: pulse }] }]}>
+      <Text style={[styles.callIconTxt, { color: r.color }]}>{r.icon}</Text>
+    </Animated.View>
+  );
 }
 
 export default function HistoryScreen({ navigation }) {
@@ -56,19 +102,34 @@ export default function HistoryScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState('Recent');
+  const [search, setSearch] = useState('');
+
+  const headerFade = useRef(new Animated.Value(0)).current;
+  const headerY = useRef(new Animated.Value(-20)).current;
+  const bannerSlide = useRef(new Animated.Value(30)).current;
+  const bannerFade = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(headerFade, { toValue: 1, duration: 600, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(headerY, { toValue: 0, duration: 600, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]).start();
+    setTimeout(() => {
+      Animated.parallel([
+        Animated.timing(bannerFade, { toValue: 1, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        Animated.timing(bannerSlide, { toValue: 0, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ]).start();
+    }, 300);
+  }, []);
 
   const loadHistory = useCallback(async () => {
     try {
       setError(null);
       const data = await fetchCallHistory(50);
       setLogs(data);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+    } catch (e) { setError(e.message); }
+    finally { setLoading(false); setRefreshing(false); }
   }, []);
 
   useEffect(() => { loadHistory(); }, [loadHistory]);
@@ -78,210 +139,200 @@ export default function HistoryScreen({ navigation }) {
   function formatTime(iso) {
     if (!iso) return '';
     const d = new Date(iso);
-    return d.toLocaleString('en-MY', { dateStyle: 'short', timeStyle: 'short' });
+    const now = new Date();
+    const diff = now - d;
+    if (diff < 86400000) return d.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' });
+    if (diff < 172800000) return 'Yesterday';
+    return d.toLocaleDateString('en-MY', { month: 'short', day: 'numeric' });
   }
 
-  const enrichedLogs = logs.map(item => normalizeItem(item, patterns));
-  const filteredLogs = filter === 'All'
-    ? enrichedLogs
-    : enrichedLogs.filter(item => item.riskLevel === filter);
+  let enriched = logs.map(item => normalizeItem(item, patterns));
 
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#212529" />
-        <Text style={styles.loadingText}>Loading history...</Text>
-      </View>
+  if (search.trim()) {
+    enriched = enriched.filter(item =>
+      item.callerNumber.toLowerCase().includes(search.toLowerCase()) ||
+      item.recommendation.toLowerCase().includes(search.toLowerCase())
     );
   }
+
+  if (activeFilter === 'High Risk Only') {
+    enriched = enriched.filter(item => item.riskLevel === 'High');
+  } else if (activeFilter === 'By Score') {
+    enriched = [...enriched].sort((a, b) => b.overallScore - a.overallScore);
+  }
+
+  const highCount = logs.filter(l => (l.risk_level || '').toLowerCase() === 'high').length;
 
   return (
     <View style={styles.container}>
 
-      {/* Filter Tabs */}
-      <View style={styles.filterRow}>
-        {FILTERS.map(f => (
-          <TouchableOpacity
-            key={f}
-            style={[styles.filterBtn, filter === f && styles.filterBtnActive]}
-            onPress={() => setFilter(f)}
-          >
-            <Text style={[styles.filterText, filter === f && styles.filterTextActive]}>{f}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      {/* ── Header ─────────────────────────── */}
+      <Animated.View style={[styles.header, { opacity: headerFade, transform: [{ translateY: headerY }] }]}>
+        <Text style={styles.pageTitle}>Call History</Text>
 
-      {/* Error */}
-      {error && (
-        <View style={styles.errorBox}>
-          <Text style={styles.errorText}>❌  {error}</Text>
+        {/* Search */}
+        <View style={styles.searchBox}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search callers or numbers..."
+            value={search}
+            onChangeText={setSearch}
+            placeholderTextColor={C.muted}
+          />
         </View>
-      )}
 
-      {/* Empty States */}
-      {filteredLogs.length === 0 && !error && (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>🛡️</Text>
-          <Text style={styles.emptyTitle}>No history yet</Text>
-          <Text style={styles.emptySubtitle}>Analyze a call transcript to get started.</Text>
-          <TouchableOpacity style={styles.ctaBtn} onPress={() => navigation.navigate('AnalyzeTab')}>
-            <Text style={styles.ctaBtnText}>Go to Analysis</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {filteredLogs.length === 0 && error && (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>⚠️</Text>
-          <Text style={styles.emptyTitle}>Could not load history</Text>
-          <Text style={styles.emptySubtitle}>Please check your connection and try again.</Text>
-          <TouchableOpacity style={styles.ctaBtn} onPress={onRefresh}>
-            <Text style={styles.ctaBtnText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* List */}
-      {filteredLogs.length > 0 && (
-        <FlatList
-          data={filteredLogs}
-          keyExtractor={item => item.id}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#212529" />}
-          contentContainerStyle={styles.listContent}
-          renderItem={({ item }) => {
-            const risk = RISK_CONFIG[item.riskLevel.toLowerCase()] || RISK_CONFIG['low'];
+        {/* Filters */}
+        <View style={styles.filterRow}>
+          {FILTERS.map((f, i) => {
+            const active = activeFilter === f;
+            const isHighRisk = f === 'High Risk Only';
             return (
               <TouchableOpacity
-                style={styles.card}
-                onPress={() => navigation.navigate('Detail', { call: item })}
+                key={f}
+                style={[
+                  styles.filterChip,
+                  active && (isHighRisk ? styles.filterChipHighActive : styles.filterChipActive),
+                  !active && styles.filterChipInactive,
+                ]}
+                onPress={() => setActiveFilter(active ? 'Recent' : f)}
                 activeOpacity={0.75}
               >
-                <View style={styles.cardTop}>
-                  {/* Score Badge */}
-                  <View style={[styles.scoreBadge, { backgroundColor: risk.bg }]}>
-                    <Text style={styles.scoreEmoji}>{risk.emoji}</Text>
-                    <Text style={[styles.scoreNum, { color: risk.color }]}>{item.overallScore}</Text>
-                    <Text style={[styles.scoreRisk, { color: risk.color }]}>{risk.label}</Text>
-                  </View>
-
-                  {/* Info */}
-                  <View style={styles.cardInfo}>
-                    <Text style={styles.callerText}>{item.callerNumber || 'Unknown Caller'}</Text>
-                    <Text style={styles.timeText}>{formatTime(item.callStart)}</Text>
-                    <View style={styles.patternPill}>
-                      <Text style={styles.patternPillText}>
-                        {item.triggeredPatterns?.length || 0} pattern{item.triggeredPatterns?.length !== 1 ? 's' : ''} detected
-                      </Text>
-                    </View>
-                  </View>
-
-                  <Text style={styles.chevron}>›</Text>
-                </View>
-
-                {item.recommendation ? (
-                  <View style={styles.recommendationRow}>
-                    <Text style={styles.recommendationText} numberOfLines={2}>
-                      {item.recommendation}
-                    </Text>
-                  </View>
-                ) : null}
+                {isHighRisk && <Text style={{ fontSize: 11, marginRight: 4 }}>⚠</Text>}
+                <Text style={[styles.filterChipTxt, active && !isHighRisk && { color: C.text }, active && isHighRisk && { color: '#FFF' }]}>
+                  {f}
+                </Text>
               </TouchableOpacity>
             );
-          }}
-        />
-      )}
+          })}
+        </View>
+      </Animated.View>
+
+      <FlatList
+        data={enriched}
+        keyExtractor={item => item.id}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={C.dark} />}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+        ListHeaderComponent={() => (
+          <>
+            {/* AI Shield Banner */}
+            <Animated.View style={[styles.aiBanner, { opacity: bannerFade, transform: [{ translateY: bannerSlide }] }]}>
+              <View style={styles.aiBannerLeft}>
+                <View style={styles.aiShieldIcon}>
+                  <Text style={{ fontSize: 18 }}>🛡</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.aiBannerTitle}>AI Fraud Shield Active</Text>
+                  <Text style={styles.aiBannerSub}>
+                    {highCount > 0
+                      ? `Intercepted ${highCount} suspicious call${highCount > 1 ? 's' : ''} in your history.`
+                      : 'Real-time engine monitoring all call patterns.'}
+                  </Text>
+                  <View style={styles.securingRow}>
+                    <PulseDot />
+                    <Text style={styles.securingTxt}>SECURING LINE...</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.aiBannerOrb} />
+            </Animated.View>
+          </>
+        )}
+        ListEmptyComponent={() => (
+          !loading && (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyEmoji}>🛡️</Text>
+              <Text style={styles.emptyTitle}>No history yet</Text>
+              <Text style={styles.emptySub}>Analyze a call transcript to get started.</Text>
+              <TouchableOpacity style={styles.emptyBtn} onPress={() => navigation.navigate('Analyze')}>
+                <Text style={styles.emptyBtnTxt}>Start Analysis</Text>
+              </TouchableOpacity>
+            </View>
+          )
+        )}
+        renderItem={({ item, index }) => {
+          const riskKey = item.riskLevel.toLowerCase();
+          const r = RISK[riskKey] || RISK.low;
+          return (
+            <FadeItem delay={index * 50} style={styles.callCard}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Detail', { call: item })}
+                activeOpacity={0.78}
+              >
+                <View style={styles.callCardInner}>
+                  <CallIcon riskKey={riskKey} />
+                  <View style={styles.callInfo}>
+                    <Text style={styles.callerName}>{item.callerNumber}</Text>
+                    <Text style={[styles.riskLabel, { color: r.color }]}>
+                      {item.overallScore}%  {r.label}
+                    </Text>
+                  </View>
+                  <View style={styles.callMeta}>
+                    <Text style={styles.callTime}>{formatTime(item.callStart)}</Text>
+                    {item.patterns_detected?.length > 0 && (
+                      <Text style={styles.callNumber} numberOfLines={1}>
+                        {item.patterns_detected[0]?.replace(/_/g, ' ')}
+                      </Text>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </FadeItem>
+          );
+        }}
+      />
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#EAEFF1' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#EAEFF1' },
-  loadingText: { marginTop: 14, color: '#6C757D', fontSize: 14, fontWeight: '500' },
+  container: { flex: 1, backgroundColor: C.bg },
 
-  filterRow: {
-    flexDirection: 'row',
-    padding: 16,
-    gap: 8,
-  },
-  filterBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    shadowColor: '#212529',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 1,
-  },
-  filterBtnActive: { backgroundColor: '#212529' },
-  filterText: { fontSize: 13, fontWeight: '600', color: '#6C757D' },
-  filterTextActive: { color: '#F5F6F7' },
+  header: { backgroundColor: C.bg, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 },
+  pageTitle: { fontSize: 34, fontWeight: '800', color: C.text, letterSpacing: -1, marginBottom: 16 },
 
-  errorBox: { backgroundColor: '#FAEDEB', borderRadius: 16, padding: 14, marginHorizontal: 16, marginBottom: 8 },
-  errorText: { color: '#C44A3A', fontSize: 14, fontWeight: '500' },
+  searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.surface, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 12, marginBottom: 14, shadowColor: C.text, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 1 },
+  searchIcon: { fontSize: 16, marginRight: 10 },
+  searchInput: { flex: 1, fontSize: 15, color: C.text },
 
-  emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
+  filterRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  filterChip: { borderRadius: 20, paddingHorizontal: 16, paddingVertical: 9, flexDirection: 'row', alignItems: 'center' },
+  filterChipActive: { backgroundColor: C.surface, shadowColor: C.text, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 2 },
+  filterChipHighActive: { backgroundColor: C.red },
+  filterChipInactive: { backgroundColor: 'transparent' },
+  filterChipTxt: { fontSize: 14, fontWeight: '600', color: C.muted },
+
+  listContent: { padding: 20, paddingTop: 12, paddingBottom: 60 },
+
+  // AI Banner
+  aiBanner: { backgroundColor: C.dark, borderRadius: 22, padding: 20, marginBottom: 16, overflow: 'hidden', position: 'relative' },
+  aiBannerLeft: { flexDirection: 'row', alignItems: 'flex-start', gap: 14 },
+  aiShieldIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: C.greenLight, alignItems: 'center', justifyContent: 'center' },
+  aiBannerTitle: { fontSize: 17, fontWeight: '800', color: '#FFF', marginBottom: 6, letterSpacing: -0.3 },
+  aiBannerSub: { fontSize: 13, color: '#9AA3AF', lineHeight: 19, marginBottom: 12 },
+  securingRow: { flexDirection: 'row', alignItems: 'center' },
+  securingTxt: { fontSize: 11, fontWeight: '800', color: C.greenAccent, letterSpacing: 1.5 },
+  aiBannerOrb: { position: 'absolute', right: -20, top: 20, width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.06)' },
+
+  // Call Cards
+  callCard: { backgroundColor: C.surface, borderRadius: 18, marginBottom: 10, shadowColor: C.text, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 1 },
+  callCardInner: { flexDirection: 'row', alignItems: 'center', padding: 16 },
+  callIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', marginRight: 14 },
+  callIconTxt: { fontSize: 18, fontWeight: '800' },
+  callInfo: { flex: 1 },
+  callerName: { fontSize: 15, fontWeight: '700', color: C.text, marginBottom: 3 },
+  riskLabel: { fontSize: 12, fontWeight: '800', letterSpacing: 0.5 },
+  callMeta: { alignItems: 'flex-end' },
+  callTime: { fontSize: 13, color: C.muted, fontWeight: '600', marginBottom: 3 },
+  callNumber: { fontSize: 11, color: C.muted, maxWidth: 90, textAlign: 'right' },
+
+  // Empty
+  emptyState: { alignItems: 'center', paddingTop: 60 },
   emptyEmoji: { fontSize: 48, marginBottom: 16 },
-  emptyTitle: { fontSize: 20, fontWeight: '800', color: '#212529', letterSpacing: -0.3 },
-  emptySubtitle: { fontSize: 14, color: '#6C757D', marginTop: 8, textAlign: 'center', fontWeight: '500' },
-  ctaBtn: {
-    marginTop: 24,
-    backgroundColor: '#212529',
-    paddingHorizontal: 28,
-    paddingVertical: 14,
-    borderRadius: 24,
-  },
-  ctaBtnText: { color: '#F5F6F7', fontWeight: '700', fontSize: 15 },
-
-  listContent: { padding: 16, paddingBottom: 48 },
-
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#212529',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 40,
-    elevation: 2,
-  },
-  cardTop: { flexDirection: 'row', alignItems: 'center' },
-
-  scoreBadge: {
-    borderRadius: 16,
-    padding: 12,
-    alignItems: 'center',
-    minWidth: 64,
-    marginRight: 14,
-  },
-  scoreEmoji: { fontSize: 20 },
-  scoreNum: { fontSize: 22, fontWeight: '800', marginTop: 2, letterSpacing: -0.5 },
-  scoreRisk: { fontSize: 11, fontWeight: '700', marginTop: 2, textTransform: 'uppercase' },
-
-  cardInfo: { flex: 1 },
-  callerText: { fontSize: 15, fontWeight: '700', color: '#212529' },
-  timeText: { fontSize: 12, color: '#6C757D', marginTop: 3, fontWeight: '500' },
-  patternPill: {
-    marginTop: 6,
-    alignSelf: 'flex-start',
-    backgroundColor: '#EAEFF1',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-  },
-  patternPillText: { fontSize: 11, color: '#6C757D', fontWeight: '600' },
-
-  chevron: { fontSize: 22, color: '#CED4DA', fontWeight: '300', marginLeft: 8 },
-
-  recommendationRow: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F4F6',
-  },
-  recommendationText: { fontSize: 13, color: '#6C757D', lineHeight: 18, fontStyle: 'italic' },
+  emptyTitle: { fontSize: 20, fontWeight: '800', color: C.text, letterSpacing: -0.3 },
+  emptySub: { fontSize: 14, color: C.muted, marginTop: 6, marginBottom: 24, textAlign: 'center' },
+  emptyBtn: { backgroundColor: C.dark, paddingHorizontal: 28, paddingVertical: 14, borderRadius: 20 },
+  emptyBtnTxt: { color: '#FFF', fontWeight: '700', fontSize: 15 },
 });
